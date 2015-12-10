@@ -84,6 +84,10 @@ class LogMonitor
 
         $this->newPoint = intval(shell_exec("wc -l ".$this->logFile." | awk '{print $1}'"));
         empty($this->newPoint) && $this->newPoint = 1;
+        if ($this->newPoint == $this->lastPoint) {
+            return;
+        }
+
         $this->newPoint < $this->lastPoint && $this->lastPoint = 1;
 
         if (empty($this->monitorRules)) {
