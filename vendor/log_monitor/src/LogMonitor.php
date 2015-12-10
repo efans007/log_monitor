@@ -80,15 +80,19 @@ class LogMonitor
     public function run()
     {
         $this->lastPoint = intval(trim(@file_get_contents($this->monPointFile)));
-        empty($this->lastPoint) && $this->lastPoint = 1;
+        empty($this->lastPoint) && $this->lastPoint = 0;
 
         $this->newPoint = intval(shell_exec("wc -l ".$this->logFile." | awk '{print $1}'"));
-        empty($this->newPoint) && $this->newPoint = 1;
+        if (empty($this->newPoint)) {
+            return;
+        }
+
         if ($this->newPoint == $this->lastPoint) {
             return;
         }
 
-        $this->newPoint < $this->lastPoint && $this->lastPoint = 1;
+        $this->newPoint < $this->lastPoint && $this->lastPoint = 0;
+        $this->lastPoint += 1;
 
         if (empty($this->monitorRules)) {
             echo "no monitor rules.\n";
